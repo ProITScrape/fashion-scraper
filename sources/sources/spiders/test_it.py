@@ -18,15 +18,32 @@ class TestItSpider(scrapy.Spider):
         else:
             cats.append(cat_id)
         return cats
+
+    def get_attr_ids(self,json_input, attrs):
+        if json_input["attr_values"]:
+            for attr in  json_input['attr_values']:
+                item={"id":attr['attr_filter'], "name":attr['attr_value']}
+                attrs.append(item)
+        if json_input["groups"]:
+            for attr in  json_input['groups']:
+                for attr in attr['attr_values']
+                    item={"id":attr['attr_filter'], "name":attr['attr_value']}
+                    attrs.append(item)
+        return attrs
+
     def parse(self, response):
         data=re.search(r'gbProductListSsrData = (.*?)\n', response.body.decode("utf-8")).group(1)
         data = json.loads(data)
-        data=data['results']['filterCates']['children']
-        for cat in data:
+        filter_cates=data['results']['filterCates']['children']
+        for cat in filter_cates:
             cats = []
             print(self.get_children(cat,cats))
             
-            
+        filter_attrs = data['results']['filterAttrs'] 
+        for filter_attr in filter_attrs:
+            attrs =[]
+            print (self.get_attr_ids(self,filter_attr, attrs))
+
             
             """cat_id = cat['cat_id']
             if "children" in cat.keys():
