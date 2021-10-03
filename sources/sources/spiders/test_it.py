@@ -17,5 +17,5 @@ class TestItSpider(scrapy.Spider):
             cat_id = cat['cat_id']
         d = benedict(data)
         cats =d.search('cat_id', in_keys=True, exact=True, case_sensitive=False)
-        print (cats)
+        print ("hhhh",cats)
             
