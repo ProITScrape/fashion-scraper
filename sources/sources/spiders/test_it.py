@@ -12,7 +12,7 @@ class TestItSpider(scrapy.Spider):
         data=re.search(r'gbProductListSsrData = (.*?)\n', response.body.decode("utf-8")).group(1)
         data = json.loads(data)
         data=test['results']['filterCates']['children']
-        print (data)
+        print ("hhhhh",data)
         for cat in data:
             cat_id = cat['cat_id']
         d = benedict(data)
