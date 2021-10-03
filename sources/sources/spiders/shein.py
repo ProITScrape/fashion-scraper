@@ -10,10 +10,19 @@ from inline_requests import inline_requests
 
 class SheinSpider(scrapy.Spider):
     name = 'shein'
+    all_urls =[]
     categories_urls = ['https://www.shein.com/Clothing-c-2030.html?ici=www_tab01navbar04&scici=navbar_WomenHomePage~~tab01navbar04~~4~~webLink~~~~0&srctype=category&userpath=category%3ECLOTHING']
     gallery_url= "https://www.shein.com/goods_detail/styleGallery?_lang=en&_ver=1.1.8&lookbookIds={goods_id}&page=1&spu_id={p_id}"
 
     # working on filter 
+    def start_requests(self):
+        f = open('test1.csv','r')
+        rows =f.readlines()
+        for row in rows:
+            row_values= row.split(',')
+            url= row_values[0]+"&page="
+            meta={"url":url,"page" :1}
+            yield scrapy.Request(url,callback=self.parse_category,meta=meta)
 
 
     def get_adult_kid_gender(self, categories, name):
@@ -46,19 +55,28 @@ class SheinSpider(scrapy.Spider):
         
 
 
-    def start_requests(self):
+    """def start_requests(self):
 
         for category_url in self.categories_urls:
             yield Request(url=category_url,
             callback = self.parse_category
             )
+    """
     def parse_category(self, response):
         products_urls = response.xpath('//a[@class="S-product-item__img-container j-expose__product-item-img"]/@href').getall()
-        for product_url in products_urls:
-            #product_url = "https://www.shein.com/Rib-Underwire-One-Shoulder-Bikini-Swimsuit-p-2555003-cat-1866.html"
-            yield Request(url = response.urljoin(product_url),
-                callback = self.parse_goods
-            )
+        if products_urls:
+            for product_url in products_urls:
+                #product_url = "https://www.shein.com/Rib-Underwire-One-Shoulder-Bikini-Swimsuit-p-2555003-cat-1866.html"
+                """yield Request(url = response.urljoin(product_url),
+                    callback = self.parse_goods
+                )"""
+                if product_url  not in self.all_urls:
+                    self.all_urls.append(product_url)
+                    yield{"url":product_url}
+            next_page = response.meta['page']+1
+            next_page_url =response.meta['url']+str(next_page)
+            meta ={"url":response.meta['url'],"page":next_page}
+            yield scrapy.Request(next_page_url,callback=self.parse_category,meta=meta)
             #break
     #"adult_kid","gender",,
     #

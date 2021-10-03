@@ -46,8 +46,12 @@ class TestItSpider(scrapy.Spider):
                 attr = self.attr_items[index]
                 attr_values = attr['values']
                 for attr_value in attr_values:
-                    url= response.meta['url']+"-"+attr_value['id']
-                    meta ={"index":index,"url":url}
+                    if response.meta['query']:
+                        query=response.meta['query']+"-"+attr_value['id']
+                    else:
+                        query=attr_value['id']
+                    url= response.meta['url']+query
+                    meta ={"index":index,"url":response.meta['url'],"query":query}
                     yield Request(url,meta=meta,callback= self.refine)
         
     def parse(self, response):
@@ -70,13 +74,11 @@ class TestItSpider(scrapy.Spider):
 
         #print (json.dumps(items))
         for cat in all_cats:
-            for attr in self.attr_items:
-                attr_values = attr['values']
-                for attr_value in attr_values:
-                    
-                    url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids={attr_value}".format(cat=cat, attr_value = attr_value['id'])
-                    meta={"index":0,"url":url}
-                    yield Request(url, callback= self.refine,meta=meta)
+            #1727
+            #url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=1727)
+            url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
+            meta={"index":-1,"url":url,"query":""}
+            yield Request(url, callback= self.refine,meta=meta)
                     
 
            
