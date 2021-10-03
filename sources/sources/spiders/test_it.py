@@ -11,8 +11,7 @@ class TestItSpider(scrapy.Spider):
     def parse(self, response):
         data=re.search(r'gbProductListSsrData = (.*?)\n', response.body.decode("utf-8")).group(1)
         data = json.loads(data)
-        data=test['results']['filterCates']['children']
-        print ("hhhhh",data)
+        data=data['results']['filterCates']['children']
         for cat in data:
             cat_id = cat['cat_id']
         d = benedict(data)
