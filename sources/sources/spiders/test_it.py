@@ -24,7 +24,7 @@ class TestItSpider(scrapy.Spider):
         data=data['results']['filterCates']['children']
         for cat in data:
             cats = []
-            print(self.get_children(json_input,cats))
+            print(self.get_children(cat,cats))
             
             
             
