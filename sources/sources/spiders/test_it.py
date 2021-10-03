@@ -46,8 +46,8 @@ class TestItSpider(scrapy.Spider):
                 attr = self.attr_items[index]
                 attr_values = attr['values']
                 for attr_value in attr_values:
-                    url= response.url+"-"+attr_value['id']
-                    meta ={"index":index}
+                    url= response.meta['url']+"-"+attr_value['id']
+                    meta ={"index":index,"url":url}
                     yield Request(url,meta=meta,callback= self.refine)
         
     def parse(self, response):
@@ -73,8 +73,9 @@ class TestItSpider(scrapy.Spider):
             for attr in self.attr_items:
                 attr_values = attr['values']
                 for attr_value in attr_values:
-                    meta={"index":0}
+                    
                     url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids={attr_value}".format(cat=cat, attr_value = attr_value['id'])
+                    meta={"index":0,"url":url}
                     yield Request(url, callback= self.refine,meta=meta)
                     
 
