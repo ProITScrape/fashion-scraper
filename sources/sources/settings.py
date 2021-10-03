@@ -80,7 +80,7 @@ DOWNLOADER_MIDDLEWARES = {
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     #'sources.pipelines.SourcesPipeline': 300,
-    #'sources.pipelines.CustomImageNamePipeline':1
+    'sources.pipelines.CustomImageNamePipeline':1
 }
 LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
 LOG_FILE = 'logfile.log'

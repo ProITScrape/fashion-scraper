@@ -5,11 +5,15 @@ import re
 import json
 from scrapy.utils.response import open_in_browser
 from benedict import benedict
+from inline_requests import inline_requests
 
 
 class SheinSpider(scrapy.Spider):
     name = 'shein'
     categories_urls = ['https://www.shein.com/Clothing-c-2030.html?ici=www_tab01navbar04&scici=navbar_WomenHomePage~~tab01navbar04~~4~~webLink~~~~0&srctype=category&userpath=category%3ECLOTHING']
+    gallery_url= "https://www.shein.com/goods_detail/styleGallery?_lang=en&_ver=1.1.8&lookbookIds={goods_id}&page=1&spu_id={p_id}"
+
+    # working on filter 
 
 
     def get_adult_kid_gender(self, categories, name):
@@ -51,13 +55,14 @@ class SheinSpider(scrapy.Spider):
     def parse_category(self, response):
         products_urls = response.xpath('//a[@class="S-product-item__img-container j-expose__product-item-img"]/@href').getall()
         for product_url in products_urls:
+            #product_url = "https://www.shein.com/Rib-Underwire-One-Shoulder-Bikini-Swimsuit-p-2555003-cat-1866.html"
             yield Request(url = response.urljoin(product_url),
                 callback = self.parse_goods
             )
             #break
     #"adult_kid","gender",,
-    
-
+    #
+    @inline_requests
     def parse_goods(self, response):
         #open_in_browser(response)
         rating = ""
@@ -100,8 +105,17 @@ class SheinSpider(scrapy.Spider):
             pass     
         try: 
             model_size= data['model']['size']
+        except Exception:
+            pass
+        try:
             price =data['detail']['salePrice']['amountWithSymbol'].replace('US','')
+        except Exception:
+            pass
+        try :
             person_height = data['model']['attrcm']['Height'].replace('cm',"").strip()
+        except Exception:
+            pass
+        try:
             cloth_size_in_image = data['model']['size'].replace('cm',"").strip().strip()
         except Exception:
             pass
@@ -112,13 +126,22 @@ class SheinSpider(scrapy.Spider):
         image_names = []
         more_imgs= ["https:"+img['image_url'] for img in data['more_goods_imgs']]
         list_images = ["https:"+data['goods_imgs']['main_image']['origin_image']]+["https:"+img['origin_image'] for img in data['goods_imgs']['detail_image'] ]
-        list_images = list_images + more_imgs
+        gallery_url = self.gallery_url.format(goods_id= id_product, p_id= data['detail']['productRelationID'])
+        gallery_img_response = yield Request(gallery_url)
+        #try:
+        gallery_data= json.loads(gallery_img_response.body)
+        gallery_imgs = gallery_data['info']['images']
+        #except Exception:
+        #    gallery_imgs =[]
+        
+        list_images = list_images + more_imgs + gallery_imgs
         for index, image_url in enumerate(list_images):
             image_name = "{code}_{gender}_{category}_{sub_category1}_{sub_category2}_{product_name}_{index}.jpg".format(gender=gender.lower(),category=main_category,sub_category1=sub_category_1,sub_category2=sub_category_2,product_name = product_name,code=id_product,index=index+1).replace(' ',"-")
             image_name=re.sub('[^A-Za-z0-9_^-^.]+', '-', image_name)
             image_names.append(image_name)
         image_name = "{code}_{gender}_{category}_{sub_category1}_{sub_category2}_{product_name}".format(gender=gender.lower(),category=main_category,sub_category1=sub_category_1,sub_category2=sub_category_2,product_name=product_name,code=id_product).replace(' ',"-")
         image_name = re.sub('[^A-Za-z0-9_^-^.]+', '-', image_name)
+        
         images_number = len(list_images)
         ###
         product_description =data['detail']['goods_desc']
@@ -131,15 +154,37 @@ class SheinSpider(scrapy.Spider):
         e = data['detail']
         color =""
         fabric= ""
-        desc_values=[{e["attr_name"]:e['attr_value']} for e in e['productDetails']]
+        try:
+            desc_values=[{e["attr_name"]:e['attr_value']} for e in e['productDetails']]
+        except Exception:
+            pass
+        
         try:
             color =e['productDetails'][[e['attr_name']=="Color" for e in e["productDetails"]].index(True)]['attr_value']
+        except Exception:
+            pass
+        
+        try:    
             fabric=e['productDetails'][[e['attr_name']=="Fabric" for e in e["productDetails"]].index(True)]['attr_value']
+        except Exception:
+            pass    
+        
+        try:
             material =e['productDetails'][[e['attr_name']=="Material" for e in e["productDetails"]].index(True)]['attr_value'] 
+        except Exception:
+            pass
+        
+        try:
             composition=e['productDetails'][[e['attr_name']=="Composition" for e in e["productDetails"]].index(True)]['attr_value'] 
         except Exception:
             pass
 
+        p_url= "https://www.shein.com/{url_name}-p-{goods_id}-cat-{cat}.html"
+        related_urls = [p_url.format(url_name=re.sub(' +', '-',p["goods_url_name"]),goods_id=p["goods_id"],cat=p['cat_id']) for p in data['relation_color']]
+        for url in related_urls:
+            yield Request(url = url,
+                callback = self.parse_goods
+            )
         meta_data_item={"description":product_description,
                     "brand":brand,
                     "name":product_name,
