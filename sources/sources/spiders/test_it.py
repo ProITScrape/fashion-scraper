@@ -26,7 +26,7 @@ class TestItSpider(scrapy.Spider):
                 attrs.append(item)
         if json_input["groups"]:
             for attr in  json_input['groups']:
-                for attr in attr['attr_values']
+                for attr in attr['attr_values']:
                     item={"id":attr['attr_filter'], "name":attr['attr_value']}
                     attrs.append(item)
         return attrs
