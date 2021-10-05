@@ -12,7 +12,7 @@ class SheinSpider(scrapy.Spider):
     name = 'shein'
     all_urls =[]
     attr_items=[]
-    start_urls = ['https://www.shein.com/Clothing-c-2030.html']
+    start_urls = ['https://nl.shein.com/Clothing-c-2030.html']
     #gallery_url= "https://www.shein.com/goods_detail/styleGallery?_lang=en&_ver=1.1.8&lookbookIds={goods_id}&page=1&spu_id={p_id}"
 
     # working on filter 
@@ -81,7 +81,7 @@ class SheinSpider(scrapy.Spider):
         for cat in all_cats:
             #1727
             #url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=1727)
-            url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
+            url = "https://nl.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
             meta={"index":-1,"url":url,"query":""}
             yield Request(url, callback= self.refine,meta=meta)
     
