@@ -10,7 +10,7 @@ class TestItSpider(scrapy.Spider):
         "FEED_EXPORT_FIELDS":['url',"count"]
 
     }    
-    start_urls = ['https://www.shein.com/Clothing-c-2030.html']
+    start_urls = ['https://nl.shein.com/Clothing-c-2030.html']
     def get_children(self,json_input,cats):
         cat_id = json_input['cat_id']
         if "children" in json_input.keys():
@@ -75,7 +75,7 @@ class TestItSpider(scrapy.Spider):
         for cat in all_cats:
             #1727
             #url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=1727)
-            url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
+            url = "https://nl.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
             meta={"index":-1,"url":url,"query":""}
             yield Request(url, callback= self.refine,meta=meta)
                     

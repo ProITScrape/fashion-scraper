@@ -45,8 +45,9 @@ class SheinSpider(scrapy.Spider):
         if product_count:
             product_count = product_count[0]
             if product_count <=4800:
-                meta={"url":response.url,"page" :1}
-                yield scrapy.Request(response.url,callback=self.parse_category,meta=meta,dont_filter=True)
+                url = response.url+"&page="
+                meta={"url":url,"page" :1}
+                yield scrapy.Request(url,callback=self.parse_category,meta=meta,dont_filter=True)
             else:
                 index = response.meta['index']+1
                 attr = self.attr_items[index]
