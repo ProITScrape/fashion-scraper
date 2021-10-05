@@ -21,7 +21,6 @@ class TestItSpider(scrapy.Spider):
             cats.append(cat_id)
         return cats
 
-    url= "https://www.shein.com/Clothing-c-2030.html?child_cat_id=1733&attr_ids=27_118-87_568"
     def get_attr_ids(self,json_input, attrs):
         if json_input["attr_values"]:
             for attr in  json_input['attr_values']:
@@ -82,16 +81,5 @@ class TestItSpider(scrapy.Spider):
                     
 
            
-        """cat_id = cat['cat_id']
-            if "children" in cat.keys():
-                for cat_ch in cat['children']:
-                    cat_ch_id = cat_ch['cat_id']
-                    if "children" in cat_ch.keys():
-                        for cat_ch_ch in cat_ch['children']:
-                            cat_ch_ch_id = cat_ch_ch['cat_id']
-                            if "children" in cat_ch_ch.keys():
-                            for cat_ch_ch_ch in cat_ch_ch['children']:
-                                cat_ch_ch_ch_id = cat_ch_ch_ch['cat_id']
-        """            
         
             

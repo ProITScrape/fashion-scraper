@@ -5,92 +5,25 @@ import re
 import json
 from scrapy.utils.response import open_in_browser
 from benedict import benedict
-
+from inline_requests import inline_requests
 
 
 class SheinSpider(scrapy.Spider):
     name = 'shein'
     all_urls =[]
-    attr_items=[]
-    start_urls = ['https://www.shein.com/Clothing-c-2030.html']
-    #gallery_url= "https://www.shein.com/goods_detail/styleGallery?_lang=en&_ver=1.1.8&lookbookIds={goods_id}&page=1&spu_id={p_id}"
+    categories_urls = ['https://www.shein.com/Clothing-c-2030.html?ici=www_tab01navbar04&scici=navbar_WomenHomePage~~tab01navbar04~~4~~webLink~~~~0&srctype=category&userpath=category%3ECLOTHING']
+    gallery_url= "https://www.shein.com/goods_detail/styleGallery?_lang=en&_ver=1.1.8&lookbookIds={goods_id}&page=1&spu_id={p_id}"
 
     # working on filter 
+    def start_requests(self):
+        f = open('test1.csv','r')
+        rows =f.readlines()
+        for row in rows:
+            row_values= row.split(',')
+            url= row_values[0]+"&page="
+            meta={"url":url,"page" :1}
+            yield scrapy.Request(url,callback=self.parse_category,meta=meta)
 
-    def get_children(self,json_input,cats):
-        cat_id = json_input['cat_id']
-        if "children" in json_input.keys():
-            for e in json_input['children']:
-                cat_id = e['cat_id']
-                cats= self.get_children(e,cats)
-        else:
-            cats.append(cat_id)
-        return cats
-
-    def get_attr_ids(self,json_input, attrs):
-        if json_input["attr_values"]:
-            for attr in  json_input['attr_values']:
-                item={"id":attr['attr_filter'], "name":attr['attr_value']}
-                attrs.append(item)
-        if json_input["groups"]:
-            for attr in  json_input['groups']:
-                for attr in attr['attr_values']:
-                    item={"id":attr['attr_filter'], "name":attr['attr_value']}
-                    attrs.append(item)
-        return attrs
-    
-    def refine(self,response):
-        get_product_count = response.xpath('//span[@class="top-info__title-sum"]/text()').get()
-        product_count = [int(i) for i in get_product_count.split() if i.isdigit()]
-        if product_count:
-            product_count = product_count[0]
-            if product_count <=4800:
-                meta={"url":response.url,"page" :1}
-                yield scrapy.Request(response.url,callback=self.parse_category,meta=meta,dont_filter=True)
-            else:
-                index = response.meta['index']+1
-                attr = self.attr_items[index]
-                attr_values = attr['values']
-                for attr_value in attr_values:
-                    if response.meta['query']:
-                        query=response.meta['query']+"-"+attr_value['id']
-                    else:
-                        query=attr_value['id']
-                    url= response.meta['url']+query
-                    meta ={"index":index,"url":response.meta['url'],"query":query}
-                    yield Request(url,meta=meta,callback= self.refine)
-        
-    def parse(self, response):
-        all_attrs =[]
-        all_cats = []
-        data=re.search(r'gbProductListSsrData = (.*?)\n', response.body.decode("utf-8")).group(1)
-        data = json.loads(data)
-        filter_cates=data['results']['filterCates']['children']
-        for cat in filter_cates:
-           cats = []
-           all_cats += self.get_children(cat,cats)
-        filter_attrs = data['results']['filterAttrs'] 
-        for filter_attr in filter_attrs:
-            attr_name =  filter_attr['attr_name']
-            attrs = []
-            all_attrs = self.get_attr_ids(filter_attr, attrs)
-            attr_item={"filterName":attr_name,"values":all_attrs}
-            self.attr_items.append(attr_item)
-
-        #print (json.dumps(items))
-        for cat in all_cats:
-            #1727
-            #url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=1727)
-            url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
-            meta={"index":-1,"url":url,"query":""}
-            yield Request(url, callback= self.refine,meta=meta)
-    
-    """def start_requests(self):
-        for category_url in self.categories_urls:
-            yield Request(url=category_url,
-            callback = self.parse_category
-            )
-    """
 
     def get_adult_kid_gender(self, categories, name):
         match = categories+[name]
@@ -122,7 +55,13 @@ class SheinSpider(scrapy.Spider):
         
 
 
-    
+    """def start_requests(self):
+
+        for category_url in self.categories_urls:
+            yield Request(url=category_url,
+            callback = self.parse_category
+            )
+    """
     def parse_category(self, response):
         products_urls = response.xpath('//a[@class="S-product-item__img-container j-expose__product-item-img"]/@href').getall()
         if products_urls:
@@ -141,6 +80,7 @@ class SheinSpider(scrapy.Spider):
             #break
     #"adult_kid","gender",,
     #
+    @inline_requests
     def parse_goods(self, response):
         #open_in_browser(response)
         rating = ""
@@ -163,9 +103,18 @@ class SheinSpider(scrapy.Spider):
         product_name = data['detail']['goods_name']
         id_product =  data['detail']['goods_id']
         main_category = data['parentCats']['cat_name']
-        #adult,gender
+        #adult
         gender,adult_kid = self.get_adult_kid_gender(categories,product_name)
-        
+        """
+        if "men" in main_category.lower() or "women" in main_category.lower():
+            adult_kid = "Adult"
+        else:
+            adult_kid ="Kid"  
+        if "men" in main_category.lower() or "boy" in main_category.lower():
+            gender= "M"
+        if "women" in main_category.lower() or "girl" in main_category.lower() :
+            gender = "F"
+        """
         try:
             sub_category_1=categories[1]
             sub_category_2=categories[2]
@@ -195,8 +144,15 @@ class SheinSpider(scrapy.Spider):
         image_names = []
         more_imgs= ["https:"+img['image_url'] for img in data['more_goods_imgs']]
         list_images = ["https:"+data['goods_imgs']['main_image']['origin_image']]+["https:"+img['origin_image'] for img in data['goods_imgs']['detail_image'] ]
+        gallery_url = self.gallery_url.format(goods_id= id_product, p_id= data['detail']['productRelationID'])
+        gallery_img_response = yield Request(gallery_url)
+        #try:
+        gallery_data= json.loads(gallery_img_response.body)
+        gallery_imgs = gallery_data['info']['images']
+        #except Exception:
+        #    gallery_imgs =[]
         
-        list_images = list_images + more_imgs 
+        list_images = list_images + more_imgs + gallery_imgs
         for index, image_url in enumerate(list_images):
             image_name = "{code}_{gender}_{category}_{sub_category1}_{sub_category2}_{product_name}_{index}.jpg".format(gender=gender.lower(),category=main_category,sub_category1=sub_category_1,sub_category2=sub_category_2,product_name = product_name,code=id_product,index=index+1).replace(' ',"-")
             image_name=re.sub('[^A-Za-z0-9_^-^.]+', '-', image_name)
