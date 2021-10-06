@@ -82,7 +82,7 @@ ITEM_PIPELINES = {
     #'sources.pipelines.SourcesPipeline': 300,
     'sources.pipelines.CustomImageNamePipeline':1
 }
-LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
+#LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
 #LOG_FILE = 'logfile.log'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
