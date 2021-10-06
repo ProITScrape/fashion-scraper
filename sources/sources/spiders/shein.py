@@ -120,14 +120,13 @@ class SheinSpider(scrapy.Spider):
         if products_urls:
             for product_url in products_urls:
                 #product_url = "https://nl.shein.com/Rib-Underwire-One-Shoulder-Bikini-Swimsuit-p-2555003-cat-1866.html"
-                product_url = "https://www.shein.com"+product_url
+                product_url = response.urljoin(product_url)
                 if product_url  not in self.all_urls:
-                    meta ={"productUrl":product_url,'dont_redirect': True}
+                    meta ={"productUrl":product_url}
                     self.all_urls.append(product_url)
                     yield Request(url = response.urljoin(product_url),
                         callback = self.parse_goods,
                         meta = meta
-
                     )
             next_page = response.meta['page']+1
             next_page_url =response.meta['url']+str(next_page)
@@ -180,7 +179,7 @@ class SheinSpider(scrapy.Spider):
             pass
         try:
             cloth_size_in_image = data['model']['size'].replace('cm',"").strip().strip()
-            cloth_length_in_image = data['sizeInfoDes']["sizeInfo"][[r['size']=="%s"%cloth_size_in_image for r in data['sizeInfoDes']["sizeInfo"]].index(True)]['Length '].replace('cm','').strip()
+            cloth_length_in_image = data['sizeInfoDes']["sizeInfo"][[r['size']=="%s"%cloth_size_in_image for r in data['sizeInfoDes']["sizeInfo"]].index(True)]['Lengte'].replace('cm','').strip()
         except Exception:
             pass
         image_names = []
