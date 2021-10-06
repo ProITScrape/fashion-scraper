@@ -179,7 +179,7 @@ class SheinSpider(scrapy.Spider):
             pass
         try:
             cloth_size_in_image = data['model']['size'].replace('cm',"").strip().strip()
-            cloth_length_in_image = data['sizeInfoDes']["sizeInfo"][[r['size']=="%s"%cloth_size_in_image for r in data['sizeInfoDes']["sizeInfo"]].index(True)]['Lengte'].replace('cm','').strip()
+            cloth_length_in_image = data['sizeInfoDes']["sizeInfo"][[r['size']=="%s"%cloth_size_in_image for r in data['sizeInfoDes']["sizeInfo"]].index(True)]['Lengte '].replace('cm','').strip()
         except Exception:
             pass
         image_names = []
