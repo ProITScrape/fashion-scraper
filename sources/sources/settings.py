@@ -20,8 +20,8 @@ NEWSPIDER_MODULE = 'sources.spiders'
 
 RETRY_TIMES = 50
 RETRY_HTTP_CODES = [429,403,502]
-#FEED_EXPORT_FIELDS = ["id_product","page_url","adult_kid","gender","category","subcategory1","subcategory2","price","measuring_unit","person_height",
-#"cloth_size_in_image","cloth_length_in_image","number_of_images_on_page","meta","image_names"]
+FEED_EXPORT_FIELDS = ["id_product","page_url","adult_kid","gender","category","subcategory1","subcategory2","price","measuring_unit","person_height",
+"cloth_size_in_image","cloth_length_in_image","number_of_images_on_page","meta","image_names"]
 CLOSESPIDER_ERRORCOUNT = 1
 
 IMAGES_STORE = 'images'
@@ -82,7 +82,7 @@ ITEM_PIPELINES = {
     #'sources.pipelines.SourcesPipeline': 300,
     'sources.pipelines.CustomImageNamePipeline':1
 }
-#LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
+LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
 #LOG_FILE = 'logfile.log'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
