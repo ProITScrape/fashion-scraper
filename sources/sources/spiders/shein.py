@@ -236,7 +236,7 @@ class SheinSpider(scrapy.Spider):
         for url in related_urls:
             yield Request(url = url,
                 callback = self.parse_goods,
-                meta= {"productUrl":p_url}
+                meta= {"productUrl":url}
             )
         meta_data_item={"description":product_description,
                     "brand":brand,
