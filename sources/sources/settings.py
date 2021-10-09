@@ -19,10 +19,23 @@ SPIDER_MODULES = ['sources.spiders']
 NEWSPIDER_MODULE = 'sources.spiders'
 
 RETRY_TIMES = 50
-RETRY_HTTP_CODES = [429,403,502]
+RETRY_HTTP_CODES = [429,403,502,500]
 FEED_EXPORT_FIELDS = ["id_product","page_url","adult_kid","gender","category","subcategory1","subcategory2","price","measuring_unit","person_height",
 "cloth_size_in_image","cloth_length_in_image","number_of_images_on_page","meta","image_names"]
-CLOSESPIDER_ERRORCOUNT = 1
+#CLOSESPIDER_ERRORCOUNT = 1
+
+
+#ROTATING_PROXY_LIST = ['5.79.73.131:13150']
+ROTATING_PROXY_LIST = ['63.141.241.98:16001'
+'173.208.209.42:16001'
+'69.197.179.122:16001'
+'173.208.199.74:16001'
+'163.172.36.211:16001'
+'163.172.61.67:16001'
+'51.15.0.181:16001'
+'163.172.214.117:16001']
+ROTATING_PROXY_PAGE_RETRY_TIMES=30    
+    
 
 IMAGES_STORE = 'images'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -32,7 +45,7 @@ IMAGES_STORE = 'images'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 50
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -66,7 +79,9 @@ SPIDER_MIDDLEWARES = {
 DOWNLOADER_MIDDLEWARES = {
    'sources.middlewares.SourcesDownloaderMiddleware': 543,
    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-    "sources.middlewares.SleepRetryMiddleware":100
+    "sources.middlewares.SleepRetryMiddleware":100,
+    #'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    #'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
    #'scrapy_selenium.SeleniumMiddleware': 800
 }
 
@@ -82,8 +97,8 @@ ITEM_PIPELINES = {
     #'sources.pipelines.SourcesPipeline': 300,
     'sources.pipelines.CustomImageNamePipeline':1
 }
-LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
-#LOG_FILE = 'logfile.log'
+#LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
+LOG_FILE = 'shein_logfile.log'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True

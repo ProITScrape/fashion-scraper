@@ -71,7 +71,6 @@ class TestItSpider(scrapy.Spider):
             attr_item={"filterName":attr_name,"values":all_attrs}
             self.attr_items.append(attr_item)
 
-        #print (json.dumps(items))
         for cat in all_cats:
             #1727
             #url = "https://www.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=1727)

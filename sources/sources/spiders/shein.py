@@ -116,11 +116,13 @@ class SheinSpider(scrapy.Spider):
 
     
     def parse_category(self, response):
-        products_urls = response.xpath('//a[@class="S-product-item__img-container j-expose__product-item-img"]/@href').getall()
-        if products_urls:
-            for product_url in products_urls:
-                #product_url = "https://nl.shein.com/Rib-Underwire-One-Shoulder-Bikini-Swimsuit-p-2555003-cat-1866.html"
-                product_url = response.urljoin(product_url)
+        get_prodcuts = re.search(r'gbProductListSsrData =(.*?)\n', response.body.decode("utf-8"))
+        if get_prodcuts:
+            get_prodcuts = get_prodcuts.group(1).strip()
+            data = json.loads(get_prodcuts)
+            goods = data["results"]['goods']
+            for goods_item in goods:
+                product_url = "https://nl.shein.com"+goods_item['pretreatInfo']['goodsDetailUrl']
                 if product_url  not in self.all_urls:
                     meta ={"productUrl":product_url}
                     self.all_urls.append(product_url)
@@ -132,7 +134,7 @@ class SheinSpider(scrapy.Spider):
             next_page_url =response.meta['url']+str(next_page)
             meta ={"url":response.meta['url'],"page":next_page}
             yield scrapy.Request(next_page_url,callback=self.parse_category,meta=meta)
-            #break
+            
     #"adult_kid","gender",,
     #
     def parse_goods(self, response):

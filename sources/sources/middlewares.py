@@ -111,9 +111,9 @@ class SleepRetryMiddleware(RetryMiddleware):
         RetryMiddleware.__init__(self, settings)
 
     def process_response(self, request, response, spider):
-        if response.status in [429]:
+        if response.status in [429,500]:
               # few minutes
-            sleep(5)
+            sleep(50)
             reason = response_status_message(response.status)
             return self._retry(request, reason, spider) or response
         if response.status in [403]:
