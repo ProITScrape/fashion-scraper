@@ -10,12 +10,11 @@
 from shutil import which
 import pkgutil
 
-URLS = pkgutil.get_data("sources", "../urls.csv").decode('utf8')
+#URLS = pkgutil.get_data("sources", "../urls.csv").decode('utf8')
 
 SELENIUM_DRIVER_NAME = 'firefox'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
 SELENIUM_DRIVER_ARGUMENTS=['-headless']  # '--headless' if using chrome instead of firefox
-
 BOT_NAME = 'sources'
 
 SPIDER_MODULES = ['sources.spiders']
@@ -85,7 +84,7 @@ DOWNLOADER_MIDDLEWARES = {
     "sources.middlewares.SleepRetryMiddleware":100,
     #'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
     #'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
-   #'scrapy_selenium.SeleniumMiddleware': 800
+   'scrapy_selenium.SeleniumMiddleware': 800
 }
 
 # Enable or disable extensions
@@ -101,7 +100,7 @@ ITEM_PIPELINES = {
     'sources.pipelines.CustomImageNamePipeline':1
 }
 #LOG_LEVEL = 'ERROR' # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
-LOG_FILE = 'shein_logfile.log'
+#LOG_FILE = 'shein_logfile.log'
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True

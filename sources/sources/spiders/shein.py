@@ -274,7 +274,6 @@ class SheinSpider(scrapy.Spider):
         item['image_names'] = image_names
         item['meta']= meta_data_item
         item['image_name'] = image_name
-        item['image_names'] = image_names
         item['image_urls'] = list_images
         yield item
 
