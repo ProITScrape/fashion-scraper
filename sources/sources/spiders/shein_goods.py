@@ -8,7 +8,11 @@ from benedict import benedict
 
 class SheinGoodsSpider(scrapy.Spider):
     name = 'shein_goods'
-    
+    custom_settings = {
+            'FEED_FORMAT':'csv',
+            'FEED_URI': 'shien_data.csv',
+            'IMAGES_STORE' : 'sheinimages'
+        }
     def __init__(self,goods_urls,*args, **kwargs):
         self.goods_urls = goods_urls   
 

@@ -38,7 +38,7 @@ ROTATING_PROXY_LIST = ['63.141.241.98:16001'
 ROTATING_PROXY_PAGE_RETRY_TIMES=30    
     
 
-IMAGES_STORE = 'images'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'sources (+http://www.yourdomain.com)'
 

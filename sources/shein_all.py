@@ -1,4 +1,7 @@
+
+import scrapy
 from scrapy.crawler import CrawlerProcess
+
 from sources.spiders.shein_goods  import SheinGoodsSpider
 from sources.spiders.shein_goods1  import SheinGoods1Spider
 from sources.spiders.shein_goods2  import SheinGoods2Spider

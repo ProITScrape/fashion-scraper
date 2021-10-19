@@ -11,32 +11,36 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class BoohooSpider(scrapy.Spider):
     name = 'boohoo'
-   
+    
+    custom_settings = {
+            'FEED_FORMAT':'csv',
+            'FEED_URI': 'boohoo_data.csv',
+            'IMAGES_STORE' : 'boohooimages'
+        }
+
     start_urls = ['https://us.boohoo.com/womens']
 
+    
     def parse(self, response):
         urls = response.xpath('//ol[@class="menu-section margin-bottom-20"]//li/a/@href').extract()
         for url in urls:
             url = response.urljoin(url)
             yield scrapy.Request(url,callback = self.parse_results_page)
-            break
+            #break
     
     def parse_results_page(self,response):
         next_page = response.xpath('//a[@title="Next"]/@href').extract_first()
         products_urls = response.xpath('//ul[@id="search-result-items"]/li[@class="grid-tile"]/div[@class="product-tile js-product-tile"]/meta[@itemprop="url"][1]/@content').getall()
         for p_url in products_urls:
-            p_url= "https://us.boohoo.com/plus-funnel-neck-puffer-jacket/PZZ61536.html"
-
             yield SeleniumRequest(url = p_url,callback = self.parse_product_page,wait_time=5,dont_filter= False,meta={"check":None},
                 wait_until=EC.element_to_be_clickable((By.ID, 'thumbnails'))
             )
-            break
+            #break
         if next_page :
-            pass
-            #yield scrapy.Request(next_page, callback = self.parse_results_page)
-    
+            yield scrapy.Request(next_page, callback = self.parse_results_page)
+            #pass
     def parse_product_page(self,response):
-        open_in_browser(response)
+        #open_in_browser(response)
         item = SourcesItem()
         sub_category_1 = ""
         sub_category_2 = ""
@@ -59,7 +63,6 @@ class BoohooSpider(scrapy.Spider):
         rating = ""
         review_count = ""
         color = response.xpath('//span[@class="attribute-title" and contains(text(),"Color:")]/following-sibling::span/text()').get().strip()
-
         fabric =  ""
         model_size = ""
         sizing = response.xpath('//ul[@class="swatches size clearfix"]//span[@class="swatchanchor-text"]//text()').getall()
@@ -67,8 +70,7 @@ class BoohooSpider(scrapy.Spider):
         details_care = response.xpath('//h5[@id="ui-id-3" and contains(text(),"Details & Care")]/following-sibling::div//text()').get()
         if details_care :
             details_care = details_care.strip()
-
-
+        
         meta_data_item={"description":product_description,
                     "brand":brand,
                     "name":product_name,
