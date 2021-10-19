@@ -62,7 +62,7 @@ print(resp.status_code)
 
 
 
-
+"""
 from seleniumwire import webdriver  # Import from seleniumwire
 import time
 options = webdriver.ChromeOptions() 
@@ -89,3 +89,26 @@ for request in driver.requests:
                 request.response.status_code,
                 request.response.headers['Content-Type']
             )
+"""
+import requests
+from requests.structures import CaseInsensitiveDict
+
+url = "https://www.stubhub.com/bfx/api/search/inventory/v2/listings?additionalPricingInfo=true&allSectionZoneStats=true&edgeControlEnabled=true&eventLevelStats=true&eventPricingSummary=true&listingAttributeCategorySummary=true&pricingSummary=true&quantitySummary=true§ionStats=true&shstore=1&start=0&urgencyMessaging=true&valuePercentage=true&zoneStats=true&scoreVersion=v2&eventId=104823382&quantity=&rows=20&sort=price%20asc&priceType=nonBundledPrice&listingAttributeCategoryList=&excludeListingAttributeCategoryList=&deliveryTypeList=§ionIdList=&zoneIdList=&pricemin=&pricemax=&listingRows="
+
+headers = CaseInsensitiveDict()
+headers["User-Agent"] = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0"
+headers["Accept"] = "application/json"
+headers["Accept-Language"] = "en-US"
+headers["Referer"] = "https://www.stubhub.com/bad-bunny-brooklyn-tickets-3-19-2022/event/104823382/?sort=price+asc"
+headers["Authorization"] = 'Hawk id="1634418488.43c644f9a3137734", ts="1634417652", nonce="Zq7PJW", mac="NVmjgdwlHIKEtIAfwZZ6LZ0TbFODApDDcByT9+ZYvBs="'
+headers["Connection"] = "keep-alive"
+headers["Sec-Fetch-Dest"] = "empty"
+headers["Sec-Fetch-Mode"] = "cors"
+headers["Sec-Fetch-Site"] = "same-origin"
+headers["TE"] = "trailers"
+
+
+resp = requests.get(url, headers=headers)
+
+print(resp.status_code)
+
