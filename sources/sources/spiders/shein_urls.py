@@ -45,10 +45,10 @@ class SheinUrlsSpider(scrapy.Spider):
                     if product_url  not in self.all_urls:
                         yield {"url":product_url}
                         self.all_urls.append(product_url)
-            next_page = response.meta['page']+1
-            next_page_url =response.meta['url']+str(next_page)
-            meta ={"url":response.meta['url'],"page":next_page}
-            yield scrapy.Request(next_page_url,callback=self.parse_category,meta=meta)
+                next_page = response.meta['page']+1
+                next_page_url =response.meta['url']+str(next_page)
+                meta ={"url":response.meta['url'],"page":next_page}
+                yield scrapy.Request(next_page_url,callback=self.parse_category,meta=meta)
                     
 
     def refine(self,response):
