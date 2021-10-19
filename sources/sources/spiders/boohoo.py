@@ -15,7 +15,9 @@ class BoohooSpider(scrapy.Spider):
     custom_settings = {
             'FEED_FORMAT':'csv',
             'FEED_URI': 'boohoo_data.csv',
-            'IMAGES_STORE' : 'boohooimages'
+            'IMAGES_STORE' : 'boohooimages',
+            'LOG_LEVEL' : 'ERROR', # Levels: CRITICAL, ERROR, WARNING, INFO, DEBUG
+            'LOG_FILE' :'boohoo.log'
         }
 
     start_urls = ['https://us.boohoo.com/womens']
@@ -98,7 +100,6 @@ class BoohooSpider(scrapy.Spider):
             pass
         image_urls = []
         get_images = response.xpath('//img[@data-lgimg]')
-        print (get_images)
         for img in get_images:
             img =  img.xpath('./@data-lgimg').extract_first()
             imgs_json = json.loads(img)
