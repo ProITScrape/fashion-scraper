@@ -39,11 +39,12 @@ class SheinUrlsSpider(scrapy.Spider):
             get_prodcuts = get_prodcuts.group(1).strip()
             data = json.loads(get_prodcuts)
             goods = data["results"]['goods']
-            for goods_item in goods:
-                product_url = "https://nl.shein.com"+goods_item['pretreatInfo']['goodsDetailUrl']
-                if product_url  not in self.all_urls:
-                    yield {"url":product_url}
-                    self.all_urls.append(product_url)
+            if goods:
+                for goods_item in goods:
+                    product_url = "https://nl.shein.com"+goods_item['pretreatInfo']['goodsDetailUrl']
+                    if product_url  not in self.all_urls:
+                        yield {"url":product_url}
+                        self.all_urls.append(product_url)
             next_page = response.meta['page']+1
             next_page_url =response.meta['url']+str(next_page)
             meta ={"url":response.meta['url'],"page":next_page}
