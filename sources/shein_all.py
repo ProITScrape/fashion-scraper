@@ -5,10 +5,12 @@ from sources.spiders.shein_goods2  import SheinGoods2Spider
 from sources.spiders.shein_goods3  import SheinGoods3Spider
 from sources.spiders.shein_goods4  import SheinGoods4Spider
 from scrapy.utils.project import get_project_settings
+import pkgutil
 import datetime
 settings = get_project_settings()
 goods_urls=[]
-input_file = settings.get('URLS') 
+input_file =pkgutil.get_data("sources", "/urls.csv").decode('utf8')
+
 rows = input_file.splitlines()
 for row in rows :
     goods_urls.append(row)
@@ -22,7 +24,7 @@ if len(goods_urls)%5==0:
     n=len(goods_urls)/5
 else:
     n=len(goods_urls)//5+1 
-    
+   
 goods_list=list(chunks(goods_urls, int(n)))  
 #print(test_list)   
 process = CrawlerProcess(get_project_settings())

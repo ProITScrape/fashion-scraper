@@ -10,7 +10,6 @@
 from shutil import which
 import pkgutil
 
-#URLS = pkgutil.get_data("sources", "../urls.csv").decode('utf8')
 
 SELENIUM_DRIVER_NAME = 'firefox'
 SELENIUM_DRIVER_EXECUTABLE_PATH = which('geckodriver')
