@@ -74,22 +74,23 @@ class SheinUrlsSpider(scrapy.Spider):
                     yield Request(url,meta=meta,callback= self.refine)
         else:
             index = response.meta['index']+1
-            attr = self.attr_items[index]
-            attr_values = attr['values']
-            for attr_value in attr_values:
-                if response.meta['query']:
-                    if "-" in response.meta['query']:
-                        #query=response.meta['query'].replace("-"+str(response.meta['query'].split('-')[-1]),'')
-                        query=response.meta['query'].split(response.meta['query'].split('-')[-1])[0]
-                        query=query+"-"+attr_value['id']
+            if index < len(self.attr_items):
+                attr = self.attr_items[index]
+                attr_values = attr['values']
+                for attr_value in attr_values:
+                    if response.meta['query']:
+                        if "-" in response.meta['query']:
+                            #query=response.meta['query'].replace("-"+str(response.meta['query'].split('-')[-1]),'')
+                            query=response.meta['query'].split(response.meta['query'].split('-')[-1])[0]
+                            query=query+"-"+attr_value['id']
+                        else:
+                            query=attr_value['id']
+
                     else:
                         query=attr_value['id']
-
-                else:
-                    query=attr_value['id']
-                url= response.meta['url']+query
-                meta ={"index":index,"url":response.meta['url'],"query":query}
-                yield Request(url,meta=meta,callback= self.refine)
+                    url= response.meta['url']+query
+                    meta ={"index":index,"url":response.meta['url'],"query":query}
+                    yield Request(url,meta=meta,callback= self.refine)
     
     def start_requests(self):
         for url in self.start_urls:
