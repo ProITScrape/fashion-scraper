@@ -46,15 +46,14 @@ ROTATING_PROXY_PAGE_RETRY_TIMES=30
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 500
-
+CONCURRENT_REQUESTS = 100
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 0.1
 # The download delay setting will honor only one of:
-#CONCURRENT_REQUESTS_PER_DOMAIN = 16
-#CONCURRENT_REQUESTS_PER_IP = 16
+CONCURRENT_REQUESTS_PER_DOMAIN = 100
+CONCURRENT_REQUESTS_PER_IP = 100
 
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
@@ -81,6 +80,8 @@ DOWNLOADER_MIDDLEWARES = {
    'sources.middlewares.SourcesDownloaderMiddleware': 543,
    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
     "sources.middlewares.SleepRetryMiddleware":100,
+    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
     #'scrapy_selenium.SeleniumMiddleware': 800
 }
 
