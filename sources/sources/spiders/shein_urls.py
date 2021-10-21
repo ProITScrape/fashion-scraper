@@ -79,7 +79,8 @@ class SheinUrlsSpider(scrapy.Spider):
             for attr_value in attr_values:
                 if response.meta['query']:
                     if "-" in response.meta['query']:
-                        query=response.meta['query'].replace("-"+str(response.meta['query'].split('-')[-1]),'')
+                        #query=response.meta['query'].replace("-"+str(response.meta['query'].split('-')[-1]),'')
+                        query=response.meta['query'].split(response.meta['query'].split('-')[-1])[0]
                         query=query+"-"+attr_value['id']
                     else:
                         query=attr_value['id']
