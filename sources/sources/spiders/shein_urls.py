@@ -113,7 +113,7 @@ class SheinUrlsSpider(scrapy.Spider):
             all_attrs = self.get_attr_ids(filter_attr, attrs)
             attr_item={"filterName":attr_name,"values":all_attrs}
             self.attr_items.append(attr_item)
-        #print (self.attr_items)
+        print (self.attr_items)
         for cat in all_cats:
             url = "{url}?child_cat_id={cat}&attr_ids=".format(cat=cat,url = response.meta['url'])
             meta={"index":-1,"url":url,"query":""}
