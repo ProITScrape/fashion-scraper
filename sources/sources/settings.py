@@ -80,8 +80,8 @@ DOWNLOADER_MIDDLEWARES = {
    'sources.middlewares.SourcesDownloaderMiddleware': 543,
    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
     "sources.middlewares.SleepRetryMiddleware":100,
-    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
-    'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
+    #'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    #'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
     #'scrapy_selenium.SeleniumMiddleware': 800
 }
 
