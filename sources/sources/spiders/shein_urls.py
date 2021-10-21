@@ -10,7 +10,7 @@ class SheinUrlsSpider(scrapy.Spider):
     custom_settings ={
         "FEED_EXPORT_FIELDS":['url']}
         
-    start_urls = ['https://nl.shein.com/Clothing-c-2030.html']
+    start_urls = ['https://nl.shein.com/category/Shoes-Bags-Accs-sc-00828516.html']
     def get_children(self,json_input,cats):
         cat_id = json_input['cat_id']
         if "children" in json_input.keys():
