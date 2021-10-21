@@ -72,7 +72,23 @@ class SheinUrlsSpider(scrapy.Spider):
                     url= response.meta['url']+query
                     meta ={"index":index,"url":response.meta['url'],"query":query}
                     yield Request(url,meta=meta,callback= self.refine)
-        
+        else:
+            index = response.meta['index']+1
+            attr = self.attr_items[index]
+            attr_values = attr['values']
+            for attr_value in attr_values:
+                if response.meta['query']:
+                    if "-" in response.meta['query']:
+                        query=response.meta['query'].replace("-"+str(response.meta['query'].split('-')[-1]),'')
+                        query=query+"-"+attr_value['id']
+                    else:
+                        query=attr_value['id']
+
+                else:
+                    query=attr_value['id']
+                url= response.meta['url']+query
+                meta ={"index":index,"url":response.meta['url'],"query":query}
+                yield Request(url,meta=meta,callback= self.refine)
     
     def start_requests(self):
         for url in self.start_urls:
@@ -87,6 +103,7 @@ class SheinUrlsSpider(scrapy.Spider):
         for cat in filter_cates:
            cats = []
            all_cats += self.get_children(cat,cats)
+        #print(all_cats)
         filter_attrs = data['results']['filterAttrs'] 
         for filter_attr in filter_attrs:
             attr_name =  filter_attr['attr_name']
@@ -94,7 +111,7 @@ class SheinUrlsSpider(scrapy.Spider):
             all_attrs = self.get_attr_ids(filter_attr, attrs)
             attr_item={"filterName":attr_name,"values":all_attrs}
             self.attr_items.append(attr_item)
-
+        #print (self.attr_items)
         for cat in all_cats:
             url = "{url}?child_cat_id={cat}&attr_ids=".format(cat=cat,url = response.meta['url'])
             meta={"index":-1,"url":url,"query":""}
