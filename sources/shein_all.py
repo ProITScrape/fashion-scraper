@@ -39,11 +39,11 @@ spider3 = SheinGoods3Spider
 spider4 = SheinGoods4Spider
 
 try:     
-    process.crawl(spider,goods_urls=goods_list[0])
-    process.crawl(spider1,goods_urls=goods_list[1])
-    process.crawl(spider2,goods_urls=goods_list[2])
-    process.crawl(spider3,goods_urls=goods_list[3])
-    process.crawl(spider4,goods_urls=goods_list[4])
+    process.crawl(spider,goods_urls=goods_list[0],gender="F",adult_kid="Adult")
+    process.crawl(spider1,goods_urls=goods_list[1],gender="F",adult_kid="Adult")
+    process.crawl(spider2,goods_urls=goods_list[2],gender="F",adult_kid="Adult")
+    process.crawl(spider3,goods_urls=goods_list[3],gender="F",adult_kid="Adult")
+    process.crawl(spider4,goods_urls=goods_list[4],gender="F",adult_kid="Adult")
     
 except IndexError:
     pass

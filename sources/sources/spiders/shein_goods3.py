@@ -13,8 +13,10 @@ class SheinGoods3Spider(scrapy.Spider):
             'FEED_URI': 'shien_data.csv',
             'IMAGES_STORE' : 'sheinimages'
         }
-    def __init__(self,goods_urls,*args, **kwargs):
-        self.goods_urls = goods_urls   
+    def __init__(self,goods_urls,gender,adult_kid,*args, **kwargs):
+        self.goods_urls = goods_urls
+        self.gender = gender
+        self.adult_kid = adult_kid   
 
     def start_requests(self):
         for url in self.goods_urls:
@@ -23,6 +25,8 @@ class SheinGoods3Spider(scrapy.Spider):
 
     
     def get_adult_kid_gender(self, categories, name):
+        gender = self.gender
+        adult_kid = self.adult_kid
         match = categories+[name]
         women =["girl","women"]
         men= ['men',"boy"]
