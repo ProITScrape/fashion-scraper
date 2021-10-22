@@ -10,11 +10,18 @@ from benedict import benedict
 
 class SheinSpider(scrapy.Spider):
     name = 'shein'
+    custom_settings = {
+            'FEED_FORMAT':'csv',
+            'FEED_URI': 'shien_data_m.csv',
+            'IMAGES_STORE' : 'sheinimages_m'
+        }
     all_urls =[]
     attr_items=[]
-    start_urls = ['https://nl.shein.com/Clothing-c-2030.html']
+    start_urls = ['https://nl.shein.com/Men-Clothing-c-2026.html']
     # working on filter 
-    
+    gender = "M"
+    adult_kid = "Adult"
+
     def get_children(self,json_input,cats):
         cat_id = json_input['cat_id']
         if "children" in json_input.keys():
@@ -58,7 +65,25 @@ class SheinSpider(scrapy.Spider):
                     url= response.meta['url']+query
                     meta ={"index":index,"url":response.meta['url'],"query":query}
                     yield Request(url,meta=meta,callback= self.refine)
-        
+        else:
+            index = response.meta['index']+1
+            if index < len(self.attr_items):
+                attr = self.attr_items[index]
+                attr_values = attr['values']
+                for attr_value in attr_values:
+                    if response.meta['query']:
+                        if "-" in response.meta['query']:
+                            #query=response.meta['query'].replace("-"+str(response.meta['query'].split('-')[-1]),'')
+                            query=response.meta['query'].split(response.meta['query'].split('-')[-1])[0]
+                            query=query+"-"+attr_value['id']
+                        else:
+                            query=attr_value['id']
+
+                    else:
+                        query=attr_value['id']
+                    url= response.meta['url']+query
+                    meta ={"index":index,"url":response.meta['url'],"query":query}
+                    yield Request(url,meta=meta,callback= self.refine)
     def parse(self, response):
         all_attrs =[]
         all_cats = []
@@ -78,13 +103,15 @@ class SheinSpider(scrapy.Spider):
 
         #print (json.dumps(items))
         for cat in all_cats:
-            url = "https://nl.shein.com/Clothing-c-2030.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
+            url = "https://nl.shein.com/Men-Clothing-c-2026.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
             meta={"index":-1,"url":url,"query":""}
             yield Request(url, callback= self.refine,meta=meta)
     
     
 
     def get_adult_kid_gender(self, categories, name):
+        gender = self.gender
+        adult_kid = self.adult_kid
         match = categories+[name]
         women =["girl","women"]
         men= ['men',"boy"]
