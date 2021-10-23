@@ -12,15 +12,16 @@ class SheinSpider(scrapy.Spider):
     name = 'shein'
     custom_settings = {
             'FEED_FORMAT':'csv',
-            'FEED_URI': 'shien_data_m.csv',
-            'IMAGES_STORE' : 'sheinimages_m'
+            'FEED_URI': 'shien_data_k.csv',
+            'IMAGES_STORE' : 'sheinimages_k'
         }
     all_urls =[]
     attr_items=[]
-    start_urls = ['https://nl.shein.com/Men-Clothing-c-2026.html']
+    start_urls = ['https://www.shein.com/Boys-Clothing-c-1990.html',
+            "https://www.shein.com/Toddler-Boys-Clothing-c-2059.html"]
     # working on filter 
     gender = "M"
-    adult_kid = "Adult"
+    adult_kid = "Kid"
 
     def get_children(self,json_input,cats):
         cat_id = json_input['cat_id']
@@ -84,6 +85,12 @@ class SheinSpider(scrapy.Spider):
                     url= response.meta['url']+query
                     meta ={"index":index,"url":response.meta['url'],"query":query}
                     yield Request(url,meta=meta,callback= self.refine)
+    
+    def start_requests(self):
+        for url in self.start_urls:
+            meta={"url":url}
+            yield scrapy.Request(url,callback = self.parse,meta=meta)
+
     def parse(self, response):
         all_attrs =[]
         all_cats = []
@@ -103,7 +110,7 @@ class SheinSpider(scrapy.Spider):
 
         #print (json.dumps(items))
         for cat in all_cats:
-            url = "https://nl.shein.com/Men-Clothing-c-2026.html?child_cat_id={cat}&attr_ids=".format(cat=cat)
+            url = "{url}?child_cat_id={cat}&attr_ids=".format(url=response.meta['url'],cat=cat)
             meta={"index":-1,"url":url,"query":""}
             yield Request(url, callback= self.refine,meta=meta)
     
