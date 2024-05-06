@@ -1,2 +1,2 @@
 # fashion-scraper
-scrapy project, scrape data /images from a list of  fashion website
+Scrapy project: scraping data and images from a list of fashion websites.
